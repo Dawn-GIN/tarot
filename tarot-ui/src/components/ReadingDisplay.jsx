@@ -2,8 +2,11 @@ import { motion } from 'framer-motion';
 import useTypewriter from '../hooks/useTypewriter';
 import styles from './ReadingDisplay.module.css';
 
-export default function ReadingDisplay({ text, onComplete }) {
-  const { displayed, isComplete } = useTypewriter(text, 25);
+export default function ReadingDisplay({ text, streaming = false, done = false }) {
+  // 流式模式:文本由外部逐步追加,直接展示;非流式:退回打字机效果
+  const typewriter = useTypewriter(streaming ? '' : text, 25);
+  const displayed = streaming ? text : typewriter.displayed;
+  const isComplete = streaming ? done : typewriter.isComplete;
 
   return (
     <motion.div

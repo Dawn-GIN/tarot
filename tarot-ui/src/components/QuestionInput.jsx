@@ -2,12 +2,12 @@ import { useState } from 'react';
 import { motion } from 'framer-motion';
 import styles from './QuestionInput.module.css';
 
-export default function QuestionInput({ onSubmit }) {
+export default function QuestionInput({ onSubmit, loading = false }) {
   const [question, setQuestion] = useState('');
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (question.trim()) {
+    if (question.trim() && !loading) {
       onSubmit(question.trim());
     }
   };
@@ -33,9 +33,9 @@ export default function QuestionInput({ onSubmit }) {
       <button
         className={styles.submitBtn}
         onClick={handleSubmit}
-        disabled={!question.trim()}
+        disabled={!question.trim() || loading}
       >
-        开始占卜
+        {loading ? '占卜师正在选牌...' : '开始占卜'}
       </button>
     </motion.div>
   );

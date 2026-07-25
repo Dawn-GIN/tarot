@@ -3,11 +3,10 @@ import { AnimatePresence, motion } from 'framer-motion';
 import QuestionInput from './components/QuestionInput';
 import DrawingBoard from './components/DrawingBoard';
 import ReadingDisplay from './components/ReadingDisplay';
-import { selectSpread } from './mock/spreads';
-import { drawRandomCards } from './mock/cards';
-import { generateReading } from './mock/readings';
+import { startDivination, drawCard, interpretStream } from './api/tarot';
+import { CARD_BACK } from './mock/cards';
 
-// 弧形牌堆里展示的候选牌数量（78 = 完整牌组）
+// 弧形牌堆里展示的候选牌数量（78 = 完整牌组），仅作视觉占位
 const FAN_SIZE = 78;
 
 const PHASES = {
@@ -20,68 +19,102 @@ const PHASES = {
 
 export default function App() {
   const [phase, setPhase] = useState(PHASES.QUESTION);
-  const [question, setQuestion] = useState('');
+  const [, setQuestion] = useState('');
+  const [sessionId, setSessionId] = useState(null);
   const [spread, setSpread] = useState(null);
   const [fanCards, setFanCards] = useState([]);
   const [drawnCards, setDrawnCards] = useState([]);
   const [isFlipped, setIsFlipped] = useState(false);
   const [readingText, setReadingText] = useState('');
+  const [readingDone, setReadingDone] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
 
-  const handleQuestionSubmit = useCallback((q) => {
+  const handleQuestionSubmit = useCallback(async (q) => {
     setQuestion(q);
-    const selectedSpread = selectSpread(q);
-    setSpread(selectedSpread);
-    // 准备一批弧形候选牌，每张带唯一 key 和预设的正逆位
-    const cards = drawRandomCards(FAN_SIZE).map((card, i) => ({
-      ...card,
-      key: `fan-${i}-${card.id}`,
-      drawn: false,
-    }));
-    setFanCards(cards);
-    setDrawnCards([]);
-    setIsFlipped(false);
-    setReadingText('');
-    setPhase(PHASES.DRAWING);
+    setError('');
+    setLoading(true);
+    try {
+      const data = await startDivination(q);
+      setSessionId(data.sessionId);
+      setSpread(data.spread);
+      // 弧形候选牌仅作视觉占位，只显示背面
+      const cards = Array.from({ length: FAN_SIZE }, (_, i) => ({
+        key: `fan-${i}`,
+        image: CARD_BACK,
+        drawn: false,
+      }));
+      setFanCards(cards);
+      setDrawnCards([]);
+      setIsFlipped(false);
+      setReadingText('');
+      setReadingDone(false);
+      setPhase(PHASES.DRAWING);
+    } catch (e) {
+      setError(e.message || '开始占卜失败，请稍后再试');
+    } finally {
+      setLoading(false);
+    }
   }, []);
 
-  const handleDraw = useCallback((cardKey) => {
-    setFanCards((prevFan) => {
-      const picked = prevFan.find((c) => c.key === cardKey);
-      if (!picked || picked.drawn) return prevFan;
+  const handleDraw = useCallback(async (cardKey) => {
+    if (!sessionId || !spread) return;
+    // 已抽满或该牌已抽走则忽略
+    const picked = fanCards.find((c) => c.key === cardKey);
+    if (!picked || picked.drawn) return;
+    if (drawnCards.length >= spread.cardCount) return;
 
-      setDrawnCards((prevDrawn) => {
-        if (prevDrawn.length >= spread.cardCount) return prevDrawn;
-        const newDrawn = [...prevDrawn, picked];
-        if (newDrawn.length === spread.cardCount) {
-          // 全部抽完，稍后统一翻牌
-          setTimeout(() => {
-            setIsFlipped(true);
-            setPhase(PHASES.FLIPPING);
-          }, 700);
-        }
-        return newDrawn;
-      });
+    setFanCards((prev) =>
+      prev.map((c) => (c.key === cardKey ? { ...c, drawn: true } : c))
+    );
 
-      return prevFan.map((c) =>
-        c.key === cardKey ? { ...c, drawn: true } : c
+    try {
+      const data = await drawCard(sessionId);
+      // 后端返回真实牌，带唯一 key 供共享布局动画使用
+      const newCard = { ...data.card, key: cardKey };
+      setDrawnCards((prev) => [...prev, newCard]);
+      if (data.complete) {
+        setTimeout(() => {
+          setIsFlipped(true);
+          setPhase(PHASES.FLIPPING);
+        }, 700);
+      }
+    } catch (e) {
+      // 抽卡失败，回滚该牌的已抽状态
+      setFanCards((prev) =>
+        prev.map((c) => (c.key === cardKey ? { ...c, drawn: false } : c))
       );
-    });
-  }, [spread]);
+      setError(e.message || '抽卡失败');
+    }
+  }, [sessionId, spread, fanCards, drawnCards]);
 
   const handleStartReading = useCallback(() => {
-    const text = generateReading(drawnCards, spread.positions);
-    setReadingText(text);
+    if (!sessionId) return;
+    setReadingText('');
+    setReadingDone(false);
+    setError('');
     setPhase(PHASES.READING);
-  }, [drawnCards, spread]);
+    interpretStream(sessionId, {
+      onChunk: (chunk) => setReadingText((prev) => prev + chunk),
+      onDone: () => setReadingDone(true),
+      onError: () => {
+        setReadingDone(true);
+        setError('解读过程中断，请重试');
+      },
+    });
+  }, [sessionId]);
 
   const handleReset = useCallback(() => {
     setPhase(PHASES.QUESTION);
     setQuestion('');
+    setSessionId(null);
     setSpread(null);
     setFanCards([]);
     setDrawnCards([]);
     setIsFlipped(false);
     setReadingText('');
+    setReadingDone(false);
+    setError('');
   }, []);
 
   return (
@@ -94,7 +127,12 @@ export default function App() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
           >
-            <QuestionInput onSubmit={handleQuestionSubmit} />
+            <QuestionInput onSubmit={handleQuestionSubmit} loading={loading} />
+            {error && (
+              <p style={{ color: '#ff6b6b', textAlign: 'center', marginTop: '1rem' }}>
+                {error}
+              </p>
+            )}
           </motion.div>
         )}
 
@@ -147,7 +185,7 @@ export default function App() {
             )}
 
             {phase === PHASES.READING && (
-              <ReadingDisplay text={readingText} />
+              <ReadingDisplay text={readingText} streaming done={readingDone} />
             )}
 
             {phase === PHASES.READING && (
