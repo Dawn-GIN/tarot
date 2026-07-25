@@ -1,0 +1,118 @@
+.card {
+  width: 100px;
+  height: 160px;
+  perspective: 800px;
+  cursor: pointer;
+}
+
+.cardSmall {
+  width: 68px;
+  height: 109px;
+}
+
+.cardInner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transform-style: preserve-3d;
+  transition: transform 0.6s ease;
+}
+
+.cardInner.flipped {
+  transform: rotateY(180deg);
+}
+
+.cardFace {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  backface-visibility: hidden;
+  border-radius: var(--radius-card);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem;
+  box-shadow: var(--shadow-card);
+}
+
+.cardBack {
+  border: 2px solid var(--color-accent-gold);
+  overflow: hidden;
+  padding: 0;
+}
+
+.cardFront {
+  background: linear-gradient(145deg, #1a1a3e, #0f0f2a);
+  border: 2px solid var(--color-accent-purple);
+  transform: rotateY(180deg);
+  text-align: center;
+  gap: 0.3rem;
+  overflow: hidden;
+}
+
+.cardImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: calc(var(--radius-card) - 2px);
+}
+
+.reversedImage {
+  transform: rotate(180deg);
+}
+
+.cardNumber {
+  font-size: 0.7rem;
+  color: var(--color-accent-gold);
+  opacity: 0.8;
+}
+
+.cardName {
+  font-size: 0.85rem;
+  color: var(--color-text-primary);
+  font-weight: 600;
+}
+
+.cardNameEn {
+  font-size: 0.6rem;
+  color: var(--color-text-muted);
+}
+
+.cardNameLabel {
+  font-size: 0.8rem;
+  color: var(--color-text-primary);
+  text-align: center;
+  min-height: 1.2rem;
+}
+
+.cardOrientation {
+  color: var(--color-accent-gold);
+}
+
+.cardOrientationReversed {
+  color: var(--color-accent-purple);
+}
+
+.cardSlot {
+  width: 100px;
+  height: 160px;
+  border: 2px dashed var(--color-border);
+  border-radius: var(--radius-card);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.3rem;
+  opacity: 0.6;
+}
+
+.slotLabel {
+  font-size: 0.8rem;
+  color: var(--color-accent-gold);
+}
+
+.slotIndex {
+  font-size: 0.65rem;
+  color: var(--color-text-muted);
+}
