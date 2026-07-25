@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dawn.tarot.infrastructure.mapper.SpreadMapper">
+
+    <resultMap id="spreadResult" type="com.dawn.tarot.infrastructure.po.SpreadPO">
+        <result property="code" column="code"/>
+        <result property="name" column="name"/>
+        <result property="description" column="description"/>
+        <result property="cardCount" column="card_count"/>
+        <result property="positions" column="positions"/>
+    </resultMap>
+
+    <select id="selectAll" resultMap="spreadResult">
+        SELECT code, name, description, card_count, positions FROM spread
+    </select>
+
+    <select id="selectByCode" resultMap="spreadResult">
+        SELECT code, name, description, card_count, positions
+        FROM spread WHERE code = #{code}
+    </select>
+</mapper>
