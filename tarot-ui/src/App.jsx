@@ -5,6 +5,7 @@ import DrawingBoard from './components/DrawingBoard';
 import ReadingDisplay from './components/ReadingDisplay';
 import { startDivination, drawCard, interpretStream } from './api/tarot';
 import { CARD_BACK } from './mock/cards';
+import CardDetailModal from './components/CardDetailModal';
 
 // 弧形牌堆里展示的候选牌数量（78 = 完整牌组），仅作视觉占位
 const FAN_SIZE = 78;
@@ -29,6 +30,7 @@ export default function App() {
   const [readingDone, setReadingDone] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [selectedCard, setSelectedCard] = useState(null);
 
   const handleQuestionSubmit = useCallback(async (q) => {
     setQuestion(q);
@@ -158,6 +160,7 @@ export default function App() {
                 drawnCards={drawnCards}
                 isFlipped={isFlipped}
                 onDraw={handleDraw}
+                onCardClick={setSelectedCard}
               />
             )}
 
@@ -211,6 +214,8 @@ export default function App() {
           </motion.div>
         )}
       </AnimatePresence>
+
+      <CardDetailModal card={selectedCard} onClose={() => setSelectedCard(null)} />
     </>
   );
 }

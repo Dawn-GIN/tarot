@@ -1,0 +1,116 @@
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 1rem;
+}
+
+.modal {
+  position: relative;
+  width: 100%;
+  max-width: 460px;
+  background: var(--color-bg-secondary);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
+  padding: 1.8rem;
+}
+
+.closeBtn {
+  position: absolute;
+  top: 0.6rem;
+  right: 0.9rem;
+  background: transparent;
+  border: none;
+  color: var(--color-text-muted);
+  font-size: 1.6rem;
+  cursor: pointer;
+  line-height: 1;
+}
+
+.closeBtn:hover {
+  color: var(--color-text-primary);
+}
+
+.header {
+  display: flex;
+  gap: 1.2rem;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.cardImage {
+  width: 110px;
+  height: 176px;
+  object-fit: cover;
+  border-radius: var(--radius-card);
+  border: 2px solid var(--color-accent-purple);
+}
+
+.cardImage.reversed {
+  transform: rotate(180deg);
+}
+
+.titleArea {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.cardName {
+  font-size: 1.4rem;
+  color: var(--color-accent-gold);
+}
+
+.orientation {
+  font-size: 0.95rem;
+  color: var(--color-text-secondary);
+}
+
+.meanings {
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+}
+
+.meaningBlock {
+  padding: 0.9rem 1rem;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border);
+  opacity: 0.55;
+}
+
+.meaningBlock.active {
+  opacity: 1;
+  border-color: var(--color-accent-gold);
+  background: rgba(212, 175, 122, 0.08);
+}
+
+.meaningLabel {
+  display: inline-block;
+  font-size: 0.85rem;
+  color: var(--color-accent-gold);
+  margin-bottom: 0.4rem;
+  font-weight: 600;
+}
+
+.meaningText {
+  font-size: 0.95rem;
+  line-height: 1.7;
+  color: var(--color-text-primary);
+}
+
+.loading,
+.error {
+  text-align: center;
+  color: var(--color-text-muted);
+  font-size: 0.9rem;
+}
+
+.error {
+  color: #ff6b6b;
+}

@@ -23,6 +23,16 @@ export function drawCard(sessionId) {
   return postJson('/api/tarot/draw', { sessionId });
 }
 
+/** 查询单张牌详情(含正逆位含义) */
+export async function getCard(id) {
+  const resp = await fetch(`/api/tarot/cards/${id}`);
+  const json = await resp.json();
+  if (json.code !== '0000') {
+    throw new Error(json.message || '查询卡牌失败');
+  }
+  return json.data;
+}
+
 /**
  * 流式解读。通过 EventSource 接收 SSE。
  * @returns 取消函数,调用可提前关闭连接
