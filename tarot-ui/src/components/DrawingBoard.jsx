@@ -11,7 +11,7 @@ function getFanTransform(index, total) {
   const maxAngle = 30; // 整个扇形张开的总圆心角
   const step = maxAngle / (total - 1);
   const angle = -maxAngle / 2 + step * index;
-  const radius = 1040; // 弧形半径（越大弧越平缓、牌间隙越大）
+  const radius = 1560; // 弧形半径（越大弧越平缓、牌间隙越大）
   const rad = (angle * Math.PI) / 180;
   const x = Math.sin(rad) * radius;
   const y = (1 - Math.cos(rad)) * radius; // 中间高两边低
@@ -44,8 +44,8 @@ export default function DrawingBoard({
               style={{ zIndex: i }}
               initial={{ x, y, rotate }}
               animate={{ x, y, rotate }}
-              whileHover={allDrawn ? {} : { y: y - 20, scale: 1.05, zIndex: 100 }}
-              transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+              whileHover={allDrawn ? {} : { y: y - 12, scale: 1.02, zIndex: 100 }}
+              transition={{ type: 'tween', duration: 0.25, ease: 'easeOut' }}
             >
               <TarotCard
                 small
