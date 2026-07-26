@@ -21,4 +21,6 @@ public class Card {
     private String suit;
     private String rank;
     private String image;
+    private String uprightMeaning;
+    private String reversedMeaning;
 }

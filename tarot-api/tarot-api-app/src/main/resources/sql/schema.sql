@@ -15,7 +15,9 @@ CREATE TABLE IF NOT EXISTS card (
     arcana   VARCHAR(16) NOT NULL COMMENT 'major/minor',
     suit     VARCHAR(16) NULL COMMENT '花色(小阿卡纳)',
     `rank`   VARCHAR(16) NULL COMMENT '点数(小阿卡纳)',
-    image    VARCHAR(128) NOT NULL COMMENT '图片路径'
+    image    VARCHAR(128) NOT NULL COMMENT '图片路径',
+    upright_meaning  VARCHAR(512) NULL COMMENT '正位含义',
+    reversed_meaning VARCHAR(512) NULL COMMENT '逆位含义'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='塔罗卡牌';
 
 CREATE TABLE IF NOT EXISTS tarot_history (
