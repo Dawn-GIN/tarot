@@ -35,3 +35,7 @@ build/
 
 # ===== 操作系统 =====
 Thumbs.db
+
+# ===== Docker 构建产物 =====
+*.tar
+*.tar.gz

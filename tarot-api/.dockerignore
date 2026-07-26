@@ -1,2 +1,4 @@
-*
-!tarot-api-app/target/tarot-api-app-*.jar
+**/.idea
+**/*.iml
+.env
+.env.*

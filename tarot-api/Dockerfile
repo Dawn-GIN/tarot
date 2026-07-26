@@ -2,7 +2,7 @@ FROM eclipse-temurin:17-jre-alpine
 
 WORKDIR /app
 
-COPY tarot-api-app/target/tarot-api-app-*.jar app.jar
+COPY tarot-api-app/target/tarot-api.jar app.jar
 
 ENV JAVA_OPTS="-Xms256m -Xmx512m"
 
