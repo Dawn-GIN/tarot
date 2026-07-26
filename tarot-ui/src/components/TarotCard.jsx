@@ -32,7 +32,6 @@ export function TarotCard({ card, isFlipped, onClick, layoutId, small = false })
 export function CardSlot({ position }) {
   return (
     <div className={styles.cardSlot}>
-      <span className={styles.slotLabel}>{position.label}</span>
       <span className={styles.slotIndex}>{position.index + 1}</span>
     </div>
   );

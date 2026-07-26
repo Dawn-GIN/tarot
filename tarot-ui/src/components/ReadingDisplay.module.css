@@ -9,6 +9,16 @@
   box-shadow: var(--shadow-card);
 }
 
+.blessing {
+  margin: 0 0 1rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--color-border);
+  font-size: 1.1rem;
+  color: var(--color-accent-gold);
+  text-align: center;
+  letter-spacing: 0.05em;
+}
+
 .readingText {
   font-size: 1rem;
   line-height: 1.8;
@@ -35,7 +45,10 @@
   margin-top: 1.5rem;
   padding-top: 1rem;
   border-top: 1px solid var(--color-border);
-  font-size: 0.85rem;
+}
+
+.disclaimer {
+  font-size: 0.7rem;
   color: var(--color-text-muted);
-  text-align: center;
+  opacity: 0.7;
 }

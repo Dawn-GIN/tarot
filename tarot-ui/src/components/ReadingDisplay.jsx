@@ -15,19 +15,22 @@ export default function ReadingDisplay({ text, streaming = false, done = false }
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
     >
+      <p className={styles.blessing}>愿这些启示能为你指引方向</p>
       <div className={styles.readingText}>
         {displayed}
         {!isComplete && <span className={styles.cursor} />}
       </div>
       {isComplete && (
-        <motion.p
+        <motion.div
           className={styles.completeHint}
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.5 }}
         >
-          解读完成 — 愿这些启示能为你指引方向
-        </motion.p>
+          <span className={styles.disclaimer}>
+            本解读由 AI 生成，仅供参考娱乐，请理性看待
+          </span>
+        </motion.div>
       )}
     </motion.div>
   );

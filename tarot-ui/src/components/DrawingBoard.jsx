@@ -8,11 +8,10 @@ function getFanTransform(index, total) {
   if (total <= 1) {
     return { x: 0, y: 0, rotate: 0 };
   }
-  const perCard = 2.2; // 相邻两张牌之间的角度间隔
-  const maxAngle = Math.min(170, perCard * (total - 1)); // 整个扇形张开的总角度
+  const maxAngle = 30; // 整个扇形张开的总圆心角
   const step = maxAngle / (total - 1);
   const angle = -maxAngle / 2 + step * index;
-  const radius = 520; // 弧形半径（越大弧越平缓）
+  const radius = 1040; // 弧形半径（越大弧越平缓、牌间隙越大）
   const rad = (angle * Math.PI) / 180;
   const x = Math.sin(rad) * radius;
   const y = (1 - Math.cos(rad)) * radius; // 中间高两边低
@@ -25,6 +24,7 @@ export default function DrawingBoard({
   drawnCards,
   isFlipped,
   onDraw,
+  onCardClick,
 }) {
   const totalNeeded = spread.cardCount;
   const drawnCount = drawnCards.length;
@@ -71,11 +71,17 @@ export default function DrawingBoard({
         <div className={styles.slotsRow}>
           {spread.positions.map((position, i) => (
             <div key={position.index} className={styles.slotWrapper}>
+              <span className={styles.slotPositionLabel}>{position.label}</span>
               {drawnCards[i] ? (
                 <TarotCard
                   card={drawnCards[i]}
                   isFlipped={isFlipped}
                   layoutId={drawnCards[i].key}
+                  onClick={
+                    isFlipped && onCardClick
+                      ? () => onCardClick(drawnCards[i])
+                      : undefined
+                  }
                 />
               ) : (
                 <CardSlot position={position} />
@@ -95,7 +101,6 @@ export default function DrawingBoard({
                   </span>
                 </span>
               )}
-              <span className={styles.slotPositionLabel}>{position.label}</span>
             </div>
           ))}
         </div>
