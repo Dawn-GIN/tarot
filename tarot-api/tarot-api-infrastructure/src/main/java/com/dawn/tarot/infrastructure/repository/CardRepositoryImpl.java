@@ -1,6 +1,7 @@
 package com.dawn.tarot.infrastructure.repository;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.stereotype.Repository;
 
@@ -20,5 +21,10 @@ public class CardRepositoryImpl implements CardRepository {
     @Override
     public List<Card> findAll() {
         return cardMapper.selectAll();
+    }
+
+    @Override
+    public Optional<Card> findById(Integer id) {
+        return Optional.ofNullable(cardMapper.selectById(id));
     }
 }

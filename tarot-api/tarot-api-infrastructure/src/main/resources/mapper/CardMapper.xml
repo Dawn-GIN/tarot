@@ -11,11 +11,22 @@
         <result property="suit" column="suit"/>
         <result property="rank" column="rank"/>
         <result property="image" column="image"/>
+        <result property="uprightMeaning" column="upright_meaning"/>
+        <result property="reversedMeaning" column="reversed_meaning"/>
     </resultMap>
 
+    <sql id="cardColumns">
+        id, name, name_en, arcana, suit, `rank`, image, upright_meaning, reversed_meaning
+    </sql>
+
     <select id="selectAll" resultMap="cardResult">
-        SELECT id, name, name_en, arcana, suit, `rank`, image
+        SELECT <include refid="cardColumns"/>
         FROM card
         ORDER BY id
+    </select>
+
+    <select id="selectById" resultMap="cardResult">
+        SELECT <include refid="cardColumns"/>
+        FROM card WHERE id = #{id}
     </select>
 </mapper>

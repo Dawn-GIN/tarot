@@ -9,4 +9,6 @@ import com.dawn.tarot.domain.model.Card;
 @Mapper
 public interface CardMapper {
     List<Card> selectAll();
+
+    Card selectById(Integer id);
 }
