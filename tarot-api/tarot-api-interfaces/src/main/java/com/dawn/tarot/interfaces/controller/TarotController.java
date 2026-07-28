@@ -46,7 +46,9 @@ public class TarotController {
 
     @PostMapping("/start")
     public ApiResponse<StartResponse> start(@Valid @RequestBody StartRequest request) {
+        log.info("[开始占卜] 问题=\"{}\"", request.getQuestion());
         TarotSession session = startService.start(UserContext.currentUserId(), request.getQuestion());
+        log.info("[开始占卜] 成功, sessionId={}, 牌阵={}", session.getSessionId(), session.getSpread().getName());
         return ApiResponse.ok(new StartResponse(session.getSessionId(), session.getSpread()));
     }
 
@@ -58,12 +60,18 @@ public class TarotController {
 
     @GetMapping(value = "/interpret", produces = "text/event-stream;charset=UTF-8")
     public SseEmitter interpret(@RequestParam String sessionId) {
+        log.info("[解读] 开始, sessionId={}", sessionId);
         SseEmitter emitter = new SseEmitter(120_000L);
+        long startTime = System.currentTimeMillis();
         CompletableFuture.runAsync(() -> interpretService.interpret(
                 sessionId,
                 chunk -> sendChunk(emitter, chunk),
                 error -> completeWithError(emitter, error),
-                full -> completeStream(emitter)
+                full -> {
+                    long elapsed = System.currentTimeMillis() - startTime;
+                    log.info("[解读] 完成, sessionId={}, 耗时={}ms, 字数={}", sessionId, elapsed, full.length());
+                    completeStream(emitter);
+                }
         ));
         return emitter;
     }

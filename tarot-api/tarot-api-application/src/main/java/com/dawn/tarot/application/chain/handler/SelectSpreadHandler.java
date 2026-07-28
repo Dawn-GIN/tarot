@@ -44,6 +44,7 @@ public class SelectSpreadHandler implements StartHandler {
         String code = askLlmForSpreadCode(context.getQuestion(), spreads);
         Spread chosen = spreadRepository.findByCode(code)
                 .orElseGet(() -> spreads.get(0));
+        log.info("[选牌阵] 结果={}, code={}", chosen.getName(), chosen.getCode());
         context.setSpread(chosen);
     }
 

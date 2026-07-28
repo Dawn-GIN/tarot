@@ -10,9 +10,12 @@ import com.dawn.tarot.domain.llm.LlmClient;
 import com.dawn.tarot.domain.model.TarotSession;
 import com.dawn.tarot.domain.repository.SessionRepository;
 
+import lombok.extern.slf4j.Slf4j;
+
 /**
  * 解牌:第二次 LLM 调用,流式输出。框架无关,通过回调向上层推送。
  */
+@Slf4j
 @Service
 public class TarotInterpretService {
 
@@ -48,6 +51,7 @@ public class TarotInterpretService {
         String userPrompt = promptBuilder.interpretUserPrompt(
                 session.getQuestion(), session.getSpread(), session.getDrawnCards());
 
+        log.info("[解读] LLM流式调用开始, sessionId={}, 牌数={}", sessionId, session.getDrawnCards().size());
         StringBuilder full = new StringBuilder();
         llmClient.stream(systemPrompt, userPrompt,
                 chunk -> {
@@ -56,6 +60,7 @@ public class TarotInterpretService {
                 },
                 onError,
                 () -> {
+                    log.info("[解读] LLM流式调用完成, sessionId={}, 输出字数={}", sessionId, full.length());
                     session.setInterpretation(full.toString());
                     sessionRepository.save(session);
                     onComplete.accept(full.toString());

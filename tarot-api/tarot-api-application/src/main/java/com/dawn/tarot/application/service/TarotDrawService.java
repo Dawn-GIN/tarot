@@ -15,9 +15,12 @@ import com.dawn.tarot.domain.model.TarotSession;
 import com.dawn.tarot.domain.repository.CardRepository;
 import com.dawn.tarot.domain.repository.SessionRepository;
 
+import lombok.extern.slf4j.Slf4j;
+
 /**
  * 逐张抽卡:后端随机抽牌,不调用 LLM。
  */
+@Slf4j
 @Service
 public class TarotDrawService {
 
@@ -56,6 +59,10 @@ public class TarotDrawService {
         sessionRepository.save(session);
 
         boolean complete = session.getDrawnCards().size() >= needed;
+        log.info("[抽牌] sessionId={}, #{} {}({}), 进度={}/{}",
+                sessionId, positionIndex + 1, picked.getName(),
+                reversed ? "逆位" : "正位",
+                session.getDrawnCards().size(), needed);
         return new DrawResult(drawnCard, session.getDrawnCards().size(), needed, complete);
     }
 
