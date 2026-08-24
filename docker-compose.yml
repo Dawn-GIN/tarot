@@ -61,6 +61,7 @@ services:
         condition: service_healthy
       redis:
         condition: service_healthy
+    image: tarot-ai-backend:latest
 
   frontend:
     build:
@@ -72,6 +73,7 @@ services:
       - "80:80"
     depends_on:
       - backend
+    image: tarot-ai-frontend:latest
 
 volumes:
   mysql_data:
