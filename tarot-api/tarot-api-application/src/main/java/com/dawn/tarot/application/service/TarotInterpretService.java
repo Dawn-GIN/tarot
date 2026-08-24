@@ -37,12 +37,15 @@ public class TarotInterpretService {
      * @param onError    出错回调
      * @param onComplete 完成回调(参数为完整解读文本)
      */
-    public void interpret(String sessionId,
+    public void interpret(Long userId, String sessionId,
                           Consumer<String> onChunk,
                           Consumer<Throwable> onError,
                           Consumer<String> onComplete) {
         TarotSession session = sessionRepository.findById(sessionId)
                 .orElseThrow(() -> new TarotException("SESSION_NOT_FOUND", "占卜会话不存在或已过期"));
+        if (!userId.equals(session.getUserId())) {
+            throw TarotException.of("SESSION_FORBIDDEN", "无权操作该占卜会话");
+        }
         if (!session.isFullyDrawn()) {
             throw new TarotException("NOT_FULLY_DRAWN", "尚未抽满卡牌,无法解读");
         }

@@ -54,7 +54,7 @@ public class TarotController {
 
     @PostMapping("/draw")
     public ApiResponse<DrawResponse> draw(@Valid @RequestBody DrawRequest request) {
-        DrawResult result = drawService.draw(request.getSessionId());
+        DrawResult result = drawService.draw(UserContext.currentUserId(), request.getSessionId());
         return ApiResponse.ok(DrawResponse.from(result));
     }
 
@@ -63,8 +63,9 @@ public class TarotController {
         log.info("[解读] 开始, sessionId={}", sessionId);
         SseEmitter emitter = new SseEmitter(120_000L);
         long startTime = System.currentTimeMillis();
+        Long userId = UserContext.currentUserId();
         CompletableFuture.runAsync(() -> interpretService.interpret(
-                sessionId,
+                userId, sessionId,
                 chunk -> sendChunk(emitter, chunk),
                 error -> completeWithError(emitter, error),
                 full -> {

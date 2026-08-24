@@ -43,6 +43,10 @@ mybatis:
     map-underscore-to-camel-case: true
 
 tarot:
+  auth:
+    jwt-secret: ${AUTH_JWT_SECRET:}
+    access-token-minutes: ${AUTH_ACCESS_TOKEN_MINUTES:30}
+    refresh-token-days: ${AUTH_REFRESH_TOKEN_DAYS:30}
   mail:
     from: ${MAIL_FROM:}
   llm:

@@ -6,6 +6,8 @@ import ReadingDisplay from './components/ReadingDisplay';
 import { startDivination, drawCard, interpretStream } from './api/tarot';
 import { CARD_BACK } from './mock/cards';
 import CardDetailModal from './components/CardDetailModal';
+import AuthPage from './components/AuthPage';
+import { clearAuth, getCurrentUser, logout } from './api/auth';
 
 // 弧形牌堆里展示的候选牌数量（78 = 完整牌组），仅作视觉占位
 const FAN_SIZE = 78;
@@ -19,6 +21,7 @@ const PHASES = {
 };
 
 export default function App() {
+  const [user, setUser] = useState(getCurrentUser());
   const [phase, setPhase] = useState(PHASES.QUESTION);
   const [, setQuestion] = useState('');
   const [sessionId, setSessionId] = useState(null);
@@ -119,8 +122,15 @@ export default function App() {
     setError('');
   }, []);
 
+  const handleLogout = useCallback(async () => {
+    try { await logout(); } finally { clearAuth(); setUser(null); handleReset(); }
+  }, [handleReset]);
+
+  if (!user) return <AuthPage onAuthenticated={(auth) => setUser({ userId: auth.userId, email: auth.email })} />;
+
   return (
     <>
+      <button onClick={handleLogout} style={{ position: 'fixed', top: '1rem', right: '1rem', zIndex: 5, padding: '.5rem .8rem', background: 'rgba(0,0,0,.25)', color: 'var(--color-text-secondary)', border: '1px solid var(--color-border)', borderRadius: 'var(--radius-sm)' }}>退出登录</button>
       <AnimatePresence mode="wait">
         {phase === PHASES.QUESTION && (
           <motion.div
