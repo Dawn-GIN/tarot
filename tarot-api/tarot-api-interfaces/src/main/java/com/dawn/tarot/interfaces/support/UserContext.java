@@ -1,17 +1,16 @@
 package com.dawn.tarot.interfaces.support;
 
-/**
- * 用户身份桩:鉴权未接入前固定返回演示用户。
- * 后期由登录态(JWT/Session)解析真实 userId。
- */
+import com.dawn.tarot.domain.exception.TarotException;
+
+/** 当前请求认证用户；由 JWT 过滤器设置，响应结束后自动清理。 */
 public final class UserContext {
-
-    private static final Long DEMO_USER_ID = 1L;
-
-    private UserContext() {
-    }
-
+    private static final ThreadLocal<Long> USER_ID = new ThreadLocal<>();
+    private UserContext() { }
     public static Long currentUserId() {
-        return DEMO_USER_ID;
+        Long userId = USER_ID.get();
+        if (userId == null) throw TarotException.of("UNAUTHORIZED", "请先登录");
+        return userId;
     }
+    public static void set(Long userId) { USER_ID.set(userId); }
+    public static void clear() { USER_ID.remove(); }
 }

@@ -1,9 +1,10 @@
 // 后端占卜接口封装。开发环境经 vite proxy 转发 /api 到 localhost:8080。
+import { getAccessToken } from './auth';
 
 async function postJson(url, body) {
   const resp = await fetch(url, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${getAccessToken() || ''}` },
     body: JSON.stringify(body),
   });
   const json = await resp.json();
@@ -25,7 +26,7 @@ export function drawCard(sessionId) {
 
 /** 查询单张牌详情(含正逆位含义) */
 export async function getCard(id) {
-  const resp = await fetch(`/api/tarot/cards/${id}`);
+  const resp = await fetch(`/api/tarot/cards/${id}`, { headers: { Authorization: `Bearer ${getAccessToken() || ''}` } });
   const json = await resp.json();
   if (json.code !== '0000') {
     throw new Error(json.message || '查询卡牌失败');
@@ -39,7 +40,7 @@ export async function getCard(id) {
  */
 export function interpretStream(sessionId, { onChunk, onDone, onError }) {
   const source = new EventSource(
-    `/api/tarot/interpret?sessionId=${encodeURIComponent(sessionId)}`
+    `/api/tarot/interpret?sessionId=${encodeURIComponent(sessionId)}&access_token=${encodeURIComponent(getAccessToken() || '')}`
   );
 
   source.addEventListener('message', (e) => {

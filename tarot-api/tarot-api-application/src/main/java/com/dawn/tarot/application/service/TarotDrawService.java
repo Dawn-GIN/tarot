@@ -34,9 +34,12 @@ public class TarotDrawService {
         this.cardRepository = cardRepository;
     }
 
-    public DrawResult draw(String sessionId) {
+    public DrawResult draw(Long userId, String sessionId) {
         TarotSession session = sessionRepository.findById(sessionId)
                 .orElseThrow(() -> new TarotException("SESSION_NOT_FOUND", "占卜会话不存在或已过期"));
+        if (!userId.equals(session.getUserId())) {
+            throw TarotException.of("SESSION_FORBIDDEN", "无权操作该占卜会话");
+        }
 
         int needed = session.getSpread().getCardCount();
         if (session.isFullyDrawn()) {
