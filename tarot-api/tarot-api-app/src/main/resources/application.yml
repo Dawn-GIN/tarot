@@ -4,6 +4,21 @@ server:
 spring:
   application:
     name: tarot-api
+  mail:
+    host: ${MAIL_HOST:}
+    port: ${MAIL_PORT:465}
+    username: ${MAIL_USERNAME:}
+    password: ${MAIL_PASSWORD:}
+    protocol: smtp
+    properties:
+      mail:
+        smtp:
+          auth: true
+          ssl:
+            enable: true
+          connectiontimeout: 5000
+          timeout: 5000
+          writetimeout: 5000
   datasource:
     url: jdbc:mysql://${MYSQL_HOST:localhost}:${MYSQL_PORT:3306}/${MYSQL_DB:tarot}?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true&useSSL=false
     username: ${MYSQL_USER:root}
@@ -28,6 +43,8 @@ mybatis:
     map-underscore-to-camel-case: true
 
 tarot:
+  mail:
+    from: ${MAIL_FROM:}
   llm:
     base-url: ${LLM_BASE_URL:https://open.bigmodel.cn/api/paas/v4}
     api-key: ${LLM_API_KEY:}
